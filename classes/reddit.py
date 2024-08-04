@@ -9,6 +9,7 @@ from classes.listForThreads import ListForThreads
 from utils.zerogpt import detectText
 from utils.result import getResultText
 from classes.countForThreads import CountForThreads
+import time
 
 class RedditBot:
     reddit: praw.Reddit
@@ -19,10 +20,15 @@ class RedditBot:
     maxThreads: int
     maxCharsPerPost: int
     postsCheckedCount: CountForThreads
+    postsDetectedCount: CountForThreads
+    interval: int
 
     def __init__(self) -> None:
         # Number of posts checked
         self.postsCheckedCount = CountForThreads()
+
+        # Number of AI generated posts found
+        self.postsDetectedCount = CountForThreads()
 
         # List of posts to check
         self.postsToCheck = []
@@ -45,6 +51,9 @@ class RedditBot:
 
             # Maximum characters per post
             self.maxCharsPerPost = config["maxCharsPerPost"]
+
+            # Sleep interval between checks
+            self.interval = config["interval"]
 
         # Setup PRAW
         session = Session()
@@ -86,10 +95,11 @@ class RedditBot:
                 return True
         return False
     
-    # Checks a list of posts if bot has already processed them
-    def __isPostsCheckedAlreadyThread(self, posts, postsFiltered):
+    # Filters a list of posts for posts that need to be checked
+    def __filterPostsThread(self, posts, postsFiltered):
         for post in posts:
-                if not self.__isPostCheckedAlready(post):
+                # If post has text, and is not already commented on
+                if (len(post.selftext) > 0) and (not self.__isPostCheckedAlready(post)):
                     postsFiltered.append(post)
     
     # Gets all posts from all configured subreddits to check
@@ -113,7 +123,7 @@ class RedditBot:
             postsToCheckInSubredditFiltered = ListForThreads()
 
             threads = [threading.Thread(
-                target=self.__isPostsCheckedAlreadyThread,
+                target=self.__filterPostsThread,
                 kwargs={"posts": postsForEachThread[threadIndex], "postsFiltered": postsToCheckInSubredditFiltered}
             ) for threadIndex in range(0,self.maxThreads)]
 
@@ -143,17 +153,19 @@ class RedditBot:
                 # If detection is successful, post result in comment
                 if detectionResult["success"]:
                     # Downvote post if necessary
-                    if detectionResult["aiPercentage"] > 25:
+                    if detectionResult["aiPercentage"] > 50:
                         post.downvote()
 
-                    # Post result in comment if possible
-                    if not post.locked:
+                    # Post result in comment if possible and AI generated text was found
+                    if (detectionResult["aiPercentage"] > 0) and (not post.locked):
                         commentToPost = getResultText(detectionResult)
                         self.__commentOnPost(post, commentToPost)
+                        self.postsDetectedCount.inc()
                     # Increment posts checked stat
                     self.postsCheckedCount.inc()
                 else:
                     logWithTimestamp("Detection failed for \"{0}\"".format(post.url))
+                    print(detectionResult)
     
     # Check all gathered posts
     def __checkPosts(self):
@@ -175,10 +187,26 @@ class RedditBot:
                 thread.join()
 
             # Print stats
-            logWithTimestamp("Total {0} posts checked in all {1} configured subreddits".format(self.postsCheckedCount.getCount(), len(self.subredditsToMonitor)))
+            logWithTimestamp("Total {0} posts checked in all {1} configured subreddits; {2} AI-generated posts detected".format(self.postsCheckedCount.getCount(), len(self.subredditsToMonitor), self.postsDetectedCount.getCount()))
 
     # Performs checking once
     def performCheckOnce(self):
         self.postsCheckedCount.reset()
+        self.postsDetectedCount.reset()
         self.__preparePostsFromSubredditsToCheck(type="new")
         self.__checkPosts()
+
+    # Sleep
+    def sleep(self):
+        logWithTimestamp("Sleeping for {0} seconds".format(self.interval))
+        time.sleep(self.interval) 
+
+    # Performs checks in loop
+    def startCheckLoop(self):
+        while True:
+            try:
+                self.performCheckOnce()
+            except Exception as e:
+                print(e)
+            finally:
+                self.sleep()

@@ -5,6 +5,6 @@ if __name__ == "__main__":
     # Load env vars
     load_dotenv()
 
-    # Start reddit bot
+    # Start reddit bot check
     redditBot = RedditBot()
-    redditBot.performCheckOnce()
+    redditBot.startCheckLoop()
