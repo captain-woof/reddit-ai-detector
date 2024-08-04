@@ -4,15 +4,20 @@ class ListForThreads:
     def __init__(self) -> None:
         self.lock = threading.Lock()
         self.actualList = []
+        self.enumIndex = 0
 
     def __iter__(self):
         return self
     
     def __next__(self):
         try:
-            next = self.pop()
+            self.lock.acquire()
+            next = self.actualList[self.enumIndex]
+            self.enumIndex += 1
+            self.lock.release()
             return next
         except IndexError:
+            self.lock.release()
             raise StopIteration
 
     def __len__(self):
