@@ -21,6 +21,7 @@ def __makePostRequest(url,dataJson,userAgent):
     )
 
 def detectText(text, userAgent):
+    resp = None
     try:
         resp = __makePostRequest(
             url="https://api.zerogpt.com/api/detect/detectText",
@@ -29,6 +30,10 @@ def detectText(text, userAgent):
             },
             userAgent=userAgent
         )
+
+        if not resp.ok:
+            raise Exception
+
         respProcessed = resp.json()
         return {
             "success": respProcessed["success"],
@@ -45,7 +50,8 @@ def detectText(text, userAgent):
             "success": False
         }
     except Exception as e:
-        print(e)
+        print("Detection failed for text: '{0}'".format(text))
+        print(resp)
         return {
             "success": False
         }
