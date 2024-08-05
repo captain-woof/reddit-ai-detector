@@ -1,9 +1,20 @@
 {
     "subredditsToMonitor": [
-        "testingground4bots"
+        "penpals",
+        "penpalsover30",
+        "LetsChat",
+        "CasualConversation",
+        "Needafriend",
+        "MeetNewPeopleHere",
+        "MakeNewFriendsHere",
+        "MeetPeople",
+        "r4r"
     ],
-    "numPostsToCheckPerCycle": 5,
-    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246",
-    "maxThreads": 5,
-    "maxCharsPerPost": 15000
+    "numPostsToCheckPerSubreddit": 100,
+    "userAgentReddit": "linux:ai-detection-bot:v1.0.0 (by /u/ai-detection-bot)",
+    "userAgentZerogpt": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246",
+    "maxThreads": 1,
+    "maxCharsPerPost": 15000,
+    "interval": 1800,
+    "aiThresholdForDetection": 25
 }
