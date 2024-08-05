@@ -46,3 +46,8 @@ class ListForThreads:
         except IndexError:
             self.lock.release()
             raise IndexError
+        
+    def clear(self):
+        self.lock.acquire()
+        self.actualList.clear()
+        self.lock.release()
