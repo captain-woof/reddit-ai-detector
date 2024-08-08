@@ -5,6 +5,15 @@ class SetForThreads:
         self.lock = threading.Lock()
         self.actualSet = set()
 
+    def __len__(self):
+        self.lock.acquire()
+        length = len(self.actualSet)
+        self.lock.release()
+        return length
+    
+    def __iter__(self):
+        return self
+
     def isValExists(self, valToCheck):
         self.lock.acquire()
         exists = valToCheck in self.actualSet

@@ -50,8 +50,6 @@ def detectText(text, userAgent):
             "success": False
         }
     except Exception as e:
-        print("Detection failed for text: '{0}'".format(text))
-        print(resp)
         return {
             "success": False
         }

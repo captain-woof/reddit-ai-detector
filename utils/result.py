@@ -9,8 +9,6 @@ Scoring scheme
 """
 
 message1 = """
-# AI-generated text detection result
-
 **This post does not contain AI-generated texts.**
 
 LLMs like ChatGPT can generate texts in mass quantities, which can be very elaborate and convincing - almost human-like. This is often used by scammers nowadays to fool people into believing that they are interacting with a real person. This escalates into all sorts of scams, including financial, identity, and much more.
@@ -23,8 +21,6 @@ Bot author: [@realCaptainWoof](https://x.com/realCaptainWoof) | Powered by [Zero
 """
 
 message2 = """
-# AI-generated text detection result
-
 **This post contains a few AI-generated texts (between 1% - 25%).** The AI-generated texts are:
 {0}
 
@@ -38,8 +34,6 @@ Bot author: [@realCaptainWoof](https://x.com/realCaptainWoof) | Powered by [Zero
 """
 
 message3 = """
-# AI-generated text detection result
-
 **This post contains some AI-generated texts (between 26% - 50%).** The AI-generated texts are:
 {0}
 
@@ -53,8 +47,6 @@ Bot author: [@realCaptainWoof](https://x.com/realCaptainWoof) | Powered by [Zero
 """
 
 message4 = """
-# AI-generated text detection result
-
 **This post contains a lot of AI-generated texts (between 51% - 75%).** The AI-generated texts are:
 {0}
 
@@ -68,8 +60,6 @@ Bot author: [@realCaptainWoof](https://x.com/realCaptainWoof) | Powered by [Zero
 """
 
 message5 = """
-# AI-generated text detection result
-
 **This post contains mostly AI-generated texts (between 76% - 99%).** The AI-generated texts are:
 {0}
 
@@ -83,8 +73,6 @@ Bot author: [@realCaptainWoof](https://x.com/realCaptainWoof) | Powered by [Zero
 """
 
 message6 = """
-# AI-generated text detection result
-
 **This post is entirely AI-generated.** The AI-generated texts are:
 {0}
 
